@@ -6,8 +6,6 @@ import fa.nfa.NFAState;
 
 import java.util.*;
 
-import javax.lang.model.util.ElementScanner6;
-
 public class RE implements REInterface 
 {
     int incrementState = 0;
@@ -48,9 +46,9 @@ public class RE implements REInterface
         {
             NFA newFactor = factor();
 
-            if (!startFactor.getStates().isEmpty())
+            if (!beginningFactor.getStates().isEmpty())
             {
-                beginningFactor = concat(beginningFactor, newFactor)
+                beginningFactor = concat(beginningFactor, newFactor);
             }
 
             else
@@ -58,6 +56,8 @@ public class RE implements REInterface
                 beginningFactor = newFactor;
             }
         }
+
+        return beginningFactor;
     }
 
     //If when combining NFA's a problem occurs, change order of addNFAStates, etc.
@@ -94,7 +94,7 @@ public class RE implements REInterface
 
     private NFA star(NFA base)
     {
-
+        return null;
     }
 
     private NFA concat(NFA nfa1, NFA nfa2)
@@ -109,7 +109,7 @@ public class RE implements REInterface
         {
             State state = itr.next();
             ((NFAState) state).setNonFinal();
-            nfa1.addTransition(set.getName(), 'e', nfa2.getStartState().getName());
+            nfa1.addTransition(state.getName(), 'e', nfa2.getStartState().getName());
         }
 
         return nfa1;
@@ -142,7 +142,7 @@ public class RE implements REInterface
 
         newNfa.addStartState(startState.getName());
         newNfa.addFinalState(endState.getName());
-        newNfa.addTransition(starState.getName(), symbol, endState.getName());
+        newNfa.addTransition(startState.getName(), symbol, endState.getName());
 
         Set<Character> alphabet = new LinkedHashSet<Character>();
         alphabet.add(symbol);
@@ -153,7 +153,7 @@ public class RE implements REInterface
 
     private void eat(char c)
     {
-        if (peek()==clone()
+        if (peek()== c)
         {
             this.regEx = this.regEx.substring(1);
         }
