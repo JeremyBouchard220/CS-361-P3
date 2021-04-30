@@ -119,9 +119,9 @@ public class RE implements REInterface
             returnState.addTransition(st.getName(), 'e', end.getName());
             Iterator<State> it2 = returnState.getFinalStates().iterator();
             while(it2.hasNext()){
-                NFAState st2 = it2.next(); //may need to make this a regular state
+                State st2 = it2.next(); //may need to make this a regular state
                 if (st2.getName().equals(st.getName()))
-                    st2.setNonFinal();
+                    ((NFAState) st2).setNonFinal();
             }
         }
         return returnState;
@@ -205,9 +205,4 @@ public class RE implements REInterface
         eat(c);
         return c;
     }
-
-    // private boolean more()
-    // {
-    //     return regEx.length() > 0;
-    // }
 }
