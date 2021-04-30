@@ -94,7 +94,37 @@ public class RE implements REInterface
 
     private NFA star(NFA base)
     {
-        return null;
+        NFAState start = new NFAState(String.valueOf(incrementState));
+        incrementState++;
+        NFAState end = new NFAState(String.valueOf(incrementState));
+        incrementState++;
+
+        NFA returnState = new NFA(); //NFA to be returned at the end
+
+        returnState.addNFAStates(base.getStates()); //start with the base
+        returnState.addStartState(start.getName());
+        returnState.addFinalState(end.getName());
+
+        //if there are zero iterations:
+        returnState.addTransition(start.getName(), 'e', end.getName());
+        returnState.addTransition(end.getName(),'e', base.getStartState().getName());
+        returnState.addTransition(start.getName(), 'e', base.getStartState().getName());
+        
+        //old alphabet
+        returnState.addAbc(base.getABC());
+
+        Iterator<State> it = base.getFinalStates().iterator();
+        while(it.hasNext()){
+            State st = it.next();
+            returnState.addTransition(st.getName(), 'e', end.getName());
+            Iterator<State> it2 = returnState.getFinalStates().iterator();
+            while(it2.hasNext()){
+                NFAState st2 = it2.next(); //may need to make this a regular state
+                if (st2.getName().equals(st.getName()))
+                    st2.setNonFinal();
+            }
+        }
+        return returnState;
     }
 
     private NFA concat(NFA nfa1, NFA nfa2)
