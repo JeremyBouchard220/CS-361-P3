@@ -5,17 +5,29 @@ import fa.State;
 import fa.nfa.NFAState;
 
 import java.util.*;
-
+/**
+ * @author Sam Jackson, Jeremy Bouchard
+ * 
+ * Parses a regular expression into an NFA
+ */
 public class RE implements REInterface 
 {
     int incrementState = 0;
     String regEx;
 
+    /**
+     * @return an NFA based on the regular expression
+     */
     public NFA getNFA() 
     {
         return regEx();
     }
 
+    /**
+     * 
+     * @return either the union between a term and another
+     * regex or simply a term
+     */
     private NFA regEx()
     {
         NFA term = term();
@@ -33,11 +45,19 @@ public class RE implements REInterface
         }
     }
     
+    /**
+     * 
+     * @param regEx holds the regEx string
+     */
     public RE(String regEx)
     {
         this.regEx = regEx;
     }
 
+    /**
+     * 
+     * @return either one factor or several
+     */
     private NFA term()
     {
         NFA beginningFactor = new NFA();
@@ -60,7 +80,12 @@ public class RE implements REInterface
         return beginningFactor;
     }
 
-    //If when combining NFA's a problem occurs, change order of addNFAStates, etc.
+    /**
+     * 
+     * @param nfa1
+     * @param nfa2
+     * @return the union of two nfas
+     */
     private NFA union(NFA nfa1, NFA nfa2)
     {
         NFA result = new NFA();
@@ -79,6 +104,10 @@ public class RE implements REInterface
         return result;
     }
 
+    /**
+     * 
+     * @return either a base, or a base star
+     */
     private NFA factor()
     {
         NFA base = base();
@@ -92,6 +121,11 @@ public class RE implements REInterface
         return base;
     }
 
+    /**
+     * 
+     * @param base
+     * @return the star of an NFA
+     */
     private NFA star(NFA base)
     {
         NFAState start = new NFAState(String.valueOf(incrementState));
@@ -127,6 +161,12 @@ public class RE implements REInterface
         return returnState;
     }
 
+    /**
+     * 
+     * @param nfa1
+     * @param nfa2
+     * @return two concatenated nfas
+     */
     private NFA concat(NFA nfa1, NFA nfa2)
     {
         Set<State> nfa1FinalStates = nfa1.getFinalStates();
@@ -145,6 +185,10 @@ public class RE implements REInterface
         return nfa1;
     }
 
+    /**
+     * 
+     * @return looks into parentheses for regex
+     */
     private NFA base()
     {
         switch (peek())
@@ -159,7 +203,11 @@ public class RE implements REInterface
         }
     }
 
-    //incrementState may need to be in parenthesis of "new" statements
+    /**
+     * 
+     * @param symbol
+     * @return an NFA based on the symbol
+     */
     private NFA symbol(char symbol)
     {
         NFA newNfa = new NFA();
@@ -181,6 +229,9 @@ public class RE implements REInterface
         return newNfa;
     }
 
+    /**
+     * processes next char
+     */
     private void eat(char c)
     {
         if (peek()== c)
@@ -194,11 +245,19 @@ public class RE implements REInterface
         }
     }
 
+    /**
+     * 
+     * @return the first char in regex
+     */
     private char peek()
     {
         return regEx.charAt(0);
     }
 
+    /**
+     * 
+     * @return the next char in the regex
+     */
     private char next()
     {
         char c = peek();
